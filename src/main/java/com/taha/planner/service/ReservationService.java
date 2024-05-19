@@ -50,6 +50,9 @@ for(String equipment : requiredEq){
                 .collect(Collectors.toList());
         System.out.println(rooms);
         for (Room room : rooms) {
+            if ("RS".equals(meetingType) && room.getCapacity() < 3) {
+                continue;
+            }
             if (isRoomAvailable(room, startTime, endTime, attendees, meetingType)) {
                 return room;
             }
