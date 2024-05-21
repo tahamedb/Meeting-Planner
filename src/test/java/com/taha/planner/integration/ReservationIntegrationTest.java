@@ -23,11 +23,10 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-@ActiveProfiles("test")
 
+@ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureWebTestClient
 public class ReservationIntegrationTest {
 
     @Autowired
@@ -38,11 +37,9 @@ public class ReservationIntegrationTest {
 
     @Autowired
     private RoomRepository roomRepository;
-    @Autowired
-    private EquipmentRepository equipmentRepository;
 
     @Autowired
-    private ReservationService reservationService;
+    private EquipmentRepository equipmentRepository;
 
     private Room room;
     private LocalDateTime startTime;
@@ -52,18 +49,21 @@ public class ReservationIntegrationTest {
     void setUp() {
         reservationRepository.deleteAll();
         roomRepository.deleteAll();
-equipmentRepository.deleteAll();
+        equipmentRepository.deleteAll();
+
         startTime = LocalDateTime.now().plusDays(1);
         endTime = startTime.plusHours(2);
-Equipment eq1=new Equipment("Pieuvre");
-Equipment eq2=new Equipment("Screen");
-Equipment eq3=new Equipment("Webcam");
-equipmentRepository.save(eq1);
-equipmentRepository.save(eq2);
-equipmentRepository.save(eq3);
+
+        Equipment eq1 = new Equipment("Pieuvre");
+        Equipment eq2 = new Equipment("Screen");
+        Equipment eq3 = new Equipment("Webcam");
+        equipmentRepository.save(eq1);
+        equipmentRepository.save(eq2);
+        equipmentRepository.save(eq3);
+
         room = new Room();
         room.setCapacity(10);
-        room.setEquipment(List.of(eq1,eq2,eq3));
+        room.setEquipment(List.of(eq1, eq2, eq3));
         room.setName("Salle 1001");
         room = roomRepository.save(room);
     }
@@ -92,6 +92,7 @@ equipmentRepository.save(eq3);
                     assertEquals(1, reservation.getAttendees());
                 });
     }
+
     @Test
     void testReserveRoom_NoAvailableRoom() {
         webTestClient.post()
@@ -99,13 +100,29 @@ equipmentRepository.save(eq3);
                         .path("/api/reservations/reserve")
                         .queryParam("startTime", startTime.toString())
                         .queryParam("endTime", endTime.toString())
-                        .queryParam("meetingType", "VS")
-                        .queryParam("attendees", 10000)
+                        .queryParam("meetingType", "RS")
+                        .queryParam("attendees", 1000)
                         .build())
                 .contentType(MediaType.APPLICATION_JSON)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.message").isEqualTo("No available room found for the given criteria.");
+    }
+    @Test
+    void testReserveRoom_InvalidMeetingType() {
+        webTestClient.post()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/api/reservations/reserve")
+                        .queryParam("startTime", startTime.toString())
+                        .queryParam("endTime", endTime.toString())
+                        .queryParam("meetingType", "INVALID_TYPE")
+                        .queryParam("attendees", 1000)
+                        .build())
+                .contentType(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody()
+                .jsonPath("$.message").isEqualTo("Invalid meeting type: INVALID_TYPE");
     }
 }

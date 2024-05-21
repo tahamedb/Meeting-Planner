@@ -36,6 +36,9 @@ public class ReservationController {
             }
             Reservation reservation = roomReservationService.makeReservation(availableRoom, startTime, endTime, meetingType, attendees);
             return ResponseEntity.ok(reservation);
+        }catch (IllegalArgumentException e) {
+            response.put("message", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             response.put("error", "An error occurred while processing the reservation.");
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);

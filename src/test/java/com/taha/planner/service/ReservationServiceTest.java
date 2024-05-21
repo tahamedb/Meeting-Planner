@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -53,8 +52,6 @@ public class ReservationServiceTest {
         reservation.setEnd(endTime);
         reservation.setType("VC");
         reservation.setAttendees(5);
-
-
     }
 
     @Test
@@ -73,7 +70,7 @@ public class ReservationServiceTest {
         when(resaRepo.findByRoomIdAndAndStartBetween(anyLong(), any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(List.of(reservation));
 
-        boolean isAvailable = reservationService.isRoomAvailable(room, startTime, endTime,  "RS");
+        boolean isAvailable = reservationService.isRoomAvailable(room, startTime, endTime, "RS");
 
         assertFalse(isAvailable);
         verify(resaRepo, times(1)).findByRoomIdAndAndStartBetween(anyLong(), any(LocalDateTime.class), any(LocalDateTime.class));
@@ -94,11 +91,10 @@ public class ReservationServiceTest {
 
     @Test
     void testMakeReservation() {
-        System.out.println(startTime);
         when(resaRepo.save(any(Reservation.class))).thenReturn(reservation);
-        System.out.println(reservation);
+
         Reservation newReservation = reservationService.makeReservation(room, startTime, endTime, "VC", 5);
-        System.out.println(newReservation);
+
         assertNotNull(newReservation);
         assertEquals(room.getId(), newReservation.getRoomId());
         assertEquals(startTime, newReservation.getStart());

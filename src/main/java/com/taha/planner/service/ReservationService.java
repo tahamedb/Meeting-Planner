@@ -33,18 +33,16 @@ for(String equipment : requiredEq){
 
 
     public Room findAvailableRoom(LocalDateTime startTime, LocalDateTime endTime, String meetingType, int attendees) {
-        // Fetch only rooms that can accommodate the number of attendees
-        System.out.println("dkhlt l findavailable room");
+        if (!isValidMeetingType(meetingType)) {
+            throw new IllegalArgumentException("Invalid meeting type: " + meetingType);
+        }        // Fetch only rooms that can accommodate the number of attendees
         List<Room> rooms = roomRepo.findRoomsByCapacity(attendees);
-//        System.out.println(roomRepo.findById(3L));
-//        System.out.println(rooms.get(0));
         if (rooms.isEmpty()) return null;
         // Sort rooms by capacity and number of equipment
         rooms = rooms.stream()
                 .sorted(Comparator.comparingInt((Room room) -> room.getCapacity())
                         .thenComparingInt(room -> room.getEquipment().size()))
                 .collect(Collectors.toList());
-        System.out.println(rooms);
         for (Room room : rooms) {
             if ("RS".equals(meetingType) && room.getCapacity() < 3) {
                 continue;
@@ -54,6 +52,10 @@ for(String equipment : requiredEq){
             }
         }
         return null;
+    }
+    private boolean isValidMeetingType(String meetingType) {
+        // Add your valid meeting types here
+        return meetingType.equals("VC") || meetingType.equals("RS") || meetingType.equals("SPEC") ;
     }
     public Reservation makeReservation(Room room, LocalDateTime startTime, LocalDateTime endTime, String meetingType, int attendees) {
         Reservation reservation = new Reservation();
