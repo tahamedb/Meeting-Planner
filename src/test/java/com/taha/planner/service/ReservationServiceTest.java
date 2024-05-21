@@ -62,7 +62,7 @@ public class ReservationServiceTest {
         when(resaRepo.findByRoomIdAndAndStartBetween(anyLong(), any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(Collections.emptyList());
 
-        boolean isAvailable = reservationService.isRoomAvailable(room, startTime, endTime, 5, "RS");
+        boolean isAvailable = reservationService.isRoomAvailable(room, startTime, endTime, "RS");
 
         assertTrue(isAvailable);
         verify(resaRepo, times(1)).findByRoomIdAndAndStartBetween(anyLong(), any(LocalDateTime.class), any(LocalDateTime.class));
@@ -73,7 +73,7 @@ public class ReservationServiceTest {
         when(resaRepo.findByRoomIdAndAndStartBetween(anyLong(), any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(List.of(reservation));
 
-        boolean isAvailable = reservationService.isRoomAvailable(room, startTime, endTime, 5, "RS");
+        boolean isAvailable = reservationService.isRoomAvailable(room, startTime, endTime,  "RS");
 
         assertFalse(isAvailable);
         verify(resaRepo, times(1)).findByRoomIdAndAndStartBetween(anyLong(), any(LocalDateTime.class), any(LocalDateTime.class));

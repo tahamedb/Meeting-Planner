@@ -49,6 +49,3 @@ INSERT INTO Room_Equipment (room_id, equipment_id) VALUES (11, 2);
 
 -- E3004 has no equipment
 
--- Example reservation
-INSERT INTO Reservation (room_id, start, end, type, attendees) VALUES (2, '2024-06-01T09:00:00', '2024-06-01T10:00:00', 'VC', 5);
-INSERT INTO Reservation (room_id, start, end, type, attendees) VALUES (3, '2024-06-02T11:00:00', '2024-06-02T12:00:00', 'SPEC', 10);

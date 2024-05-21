@@ -21,12 +21,9 @@ public class ReservationService {
             "SPEC", Set.of("Whiteboard"),
             "RS", Set.of()
     );
-public boolean isRoomAvailable(Room room, LocalDateTime start, LocalDateTime end, int participants, String meetingType){
-    System.out.println("dkhlt l is room available");
+public boolean isRoomAvailable(Room room, LocalDateTime start, LocalDateTime end, String meetingType){
     Set<String> requiredEq=equipmentRequirements.get(meetingType);
-    System.out.println(requiredEq);
 for(String equipment : requiredEq){
-    System.out.println(room.getEquipment());
     boolean hasEquipment=room.getEquipment().stream().anyMatch(e->e.getName().equals(equipment));
     if(!hasEquipment)return false;
 }
@@ -52,7 +49,7 @@ for(String equipment : requiredEq){
             if ("RS".equals(meetingType) && room.getCapacity() < 3) {
                 continue;
             }
-            if (isRoomAvailable(room, startTime, endTime, attendees, meetingType)) {
+            if (isRoomAvailable(room, startTime, endTime, meetingType)) {
                 return room;
             }
         }

@@ -1,8 +1,5 @@
 package com.taha.planner;
 
-import com.taha.planner.model.MeetingType;
-import com.taha.planner.model.Reservation;
-import com.taha.planner.service.ReservationService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
