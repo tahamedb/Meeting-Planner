@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
-
 @Service
 public class ReservationService {
     @Autowired
@@ -40,9 +39,9 @@ for(String equipment : requiredEq){
         // Fetch only rooms that can accommodate the number of attendees
         System.out.println("dkhlt l findavailable room");
         List<Room> rooms = roomRepo.findRoomsByCapacity(attendees);
-        System.out.println(roomRepo.findById(3L));
-        System.out.println(rooms.get(0));
-
+//        System.out.println(roomRepo.findById(3L));
+//        System.out.println(rooms.get(0));
+        if (rooms.isEmpty()) return null;
         // Sort rooms by capacity and number of equipment
         rooms = rooms.stream()
                 .sorted(Comparator.comparingInt((Room room) -> room.getCapacity())

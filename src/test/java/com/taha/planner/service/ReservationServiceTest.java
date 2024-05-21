@@ -47,13 +47,14 @@ public class ReservationServiceTest {
 
         reservation = new Reservation();
         reservation.setRoomId(room.getId());
+        startTime = LocalDateTime.parse("2024-05-19T11:02:00");
+        endTime = LocalDateTime.parse("2024-05-19T14:02:00");
         reservation.setStart(startTime);
         reservation.setEnd(endTime);
         reservation.setType("VC");
         reservation.setAttendees(5);
 
-        startTime = LocalDateTime.now();
-        endTime = startTime.plusHours(1);
+
     }
 
     @Test
@@ -95,13 +96,13 @@ public class ReservationServiceTest {
     void testMakeReservation() {
         System.out.println(startTime);
         when(resaRepo.save(any(Reservation.class))).thenReturn(reservation);
-
+        System.out.println(reservation);
         Reservation newReservation = reservationService.makeReservation(room, startTime, endTime, "VC", 5);
         System.out.println(newReservation);
         assertNotNull(newReservation);
         assertEquals(room.getId(), newReservation.getRoomId());
-//        assertEquals(startTime, newReservation.getStart());
-//        assertEquals(endTime, newReservation.getEnd());
+        assertEquals(startTime, newReservation.getStart());
+        assertEquals(endTime, newReservation.getEnd());
         assertEquals("VC", newReservation.getType());
         assertEquals(5, newReservation.getAttendees());
         verify(resaRepo, times(1)).save(any(Reservation.class));
