@@ -19,8 +19,12 @@ public class Equipment {
     @ManyToMany(mappedBy = "equipment")
     private Set<Room> rooms;
 
+
     @Override
     public String toString() {
         return "Equipment name: " +name;
+    }
+    public Equipment(String name) {
+        this.name = name;
     }
 }
