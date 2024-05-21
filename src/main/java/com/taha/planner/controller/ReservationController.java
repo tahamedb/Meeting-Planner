@@ -5,7 +5,6 @@ import com.taha.planner.model.Room;
 import com.taha.planner.service.ReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/reservations")
@@ -26,15 +27,18 @@ public class ReservationController {
                                          @RequestParam LocalDateTime endTime,
                                          @RequestParam String meetingType,
                                          @RequestParam int attendees) {
+        Map<String, Object> response = new HashMap<>();
         try {
             Room availableRoom = roomReservationService.findAvailableRoom(startTime, endTime, meetingType, attendees);
             if (availableRoom == null) {
-                return new ResponseEntity<>("No available room found for the given criteria.", HttpStatus.NOT_FOUND);
+                response.put("message", "No available room found for the given criteria.");
+                return ResponseEntity.ok(response);
             }
             Reservation reservation = roomReservationService.makeReservation(availableRoom, startTime, endTime, meetingType, attendees);
-            return new ResponseEntity<>(reservation, HttpStatus.CREATED);
+            return ResponseEntity.ok(reservation);
         } catch (Exception e) {
-            return new ResponseEntity<>("An error occurred while processing the reservation.", HttpStatus.INTERNAL_SERVER_ERROR);
+            response.put("error", "An error occurred while processing the reservation.");
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
