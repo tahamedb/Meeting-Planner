@@ -1,5 +1,6 @@
 package com.taha.planner.service;
 
+import com.taha.planner.model.Equipment;
 import com.taha.planner.model.Reservation;
 import com.taha.planner.model.Room;
 import com.taha.planner.repository.ReservationRepository;
@@ -74,6 +75,31 @@ public class ReservationServiceTest {
 
         assertFalse(isAvailable);
         verify(resaRepo, times(1)).findByRoomIdAndAndStartBetween(anyLong(), any(LocalDateTime.class), any(LocalDateTime.class));
+    }
+    @Test
+    void testIsRoomAvailable_missingRequiredEquipment() {
+        room.setEquipment(List.of(new Equipment("Screen"), new Equipment("Whiteboard")));
+        boolean isAvailable = reservationService.isRoomAvailable(room, startTime, endTime, "VC");
+
+        assertFalse(isAvailable);
+    }
+    @Test
+    void testFindAvailableRoom_noRoomsAvailable() {
+        when(roomRepo.findRoomsByCapacity(anyInt())).thenReturn(List.of(room));
+        when(resaRepo.findByRoomIdAndAndStartBetween(anyLong(), any(LocalDateTime.class), any(LocalDateTime.class)))
+                .thenReturn(List.of(reservation));
+
+        Room availableRoom = reservationService.findAvailableRoom(startTime, endTime, "RS", 5);
+
+        assertNull(availableRoom);
+        verify(roomRepo, times(1)).findRoomsByCapacity(anyInt());
+        verify(resaRepo, times(1)).findByRoomIdAndAndStartBetween(anyLong(), any(LocalDateTime.class), any(LocalDateTime.class));
+    }
+    @Test
+    void testFindAvailableRoom_withInvalidMeetingType() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            reservationService.findAvailableRoom(startTime, endTime, "INVALID_TYPE", 5);
+        });
     }
 
     @Test

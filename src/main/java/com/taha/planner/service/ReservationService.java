@@ -25,8 +25,7 @@ public boolean isRoomAvailable(Room room, LocalDateTime start, LocalDateTime end
     Set<String> requiredEq=equipmentRequirements.get(meetingType);
 for(String equipment : requiredEq){
     boolean hasEquipment=room.getEquipment().stream().anyMatch(e->e.getName().equals(equipment));
-    if(!hasEquipment)return false;
-}
+    if(!hasEquipment)return false;}
     List<Reservation> reservations = resaRepo.findByRoomIdAndAndStartBetween(room.getId(), start.minusHours(1), end.plusHours(1));
     return reservations.isEmpty();
 }
@@ -54,7 +53,6 @@ for(String equipment : requiredEq){
         return null;
     }
     private boolean isValidMeetingType(String meetingType) {
-        // Add your valid meeting types here
         return meetingType.equals("VC") || meetingType.equals("RS") || meetingType.equals("SPEC") ;
     }
     public Reservation makeReservation(Room room, LocalDateTime startTime, LocalDateTime endTime, String meetingType, int attendees) {
